@@ -18,11 +18,9 @@ init python:
         if renpy.music.is_playing(channel='music_player'): # checks if music is playing
             if renpy.music.get_pos(channel='music_player') is None: # gets position of song
                 time_position = time_position
+                #raise Exception("This part got called.")
             else:
                 time_position = renpy.music.get_pos(channel='music_player') # grabs position of song
-        else:
-            if time_position > time_duration - 2.0:
-                time_position = 0.0
         time_pos = time_position
         readableTime = convert_time(time_pos) # converts to readable time for display
         d = Text(readableTime, style="music_player_description_text") 
@@ -357,10 +355,8 @@ init python:
             self.adjustment = None
  
         def get_pos_duration(self):
-            pos = renpy.music.get_pos(self.channel) or 0.0
-            duration = self.soundtrack.byteTime
- 
-            return pos, duration
+            global time_position
+            return time_position, time_duration
  
         def get_adjustment(self):
             pos, duration = self.get_pos_duration()
@@ -376,6 +372,7 @@ init python:
  
             if abs(value - self.old_pos) > self.max_offset:
                 renpy.play("<from {}>".format(value) + self.soundtrack.path, self.channel)
+                time_position = value
  
         def periodic(self, st):
  
